@@ -1,4 +1,4 @@
-name: Publish Docker Image
+name: Publish Logs-to-Tsdb Docker Image
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     - name: Login to Public ECR
       uses: docker/login-action@v1
       with:
-        registry: public.ecr.aws
+        registry: 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
