@@ -15,20 +15,17 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Login to Public ECR
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Login to Public ECR
-      uses: docker/login-action@v2
+      uses: docker/login-action@v1
       with:
         registry: public.ecr.aws
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      env:
-        AWS_REGION: us-east-2
 
+    - name: Build and Push Docker image
       env:
         ECR_REPOSITORY: data-pipes-logs
         IMAGE_TAG: ${{ github.sha }}
+        AWS_REGION: us-east-2
       run: |
-        docker build -t public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG logs-to-tsdb/
         docker push public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG
