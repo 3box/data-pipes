@@ -1,2 +1,3 @@
-# data-pipes
-Lambda functions and possibly other tools for piping metrics and other metadata we are interested in
+# logs-to-tsdb
+
+Lambda function for pulling CAS Cloudwatch logs into TimescaleDB
