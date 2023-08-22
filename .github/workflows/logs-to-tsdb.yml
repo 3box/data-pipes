@@ -1,0 +1,34 @@
+name: Publish Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'logs-to-tsdb/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Public ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Login to Public ECR
+      uses: docker/login-action@v2
+      with:
+        registry: public.ecr.aws
+        username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      env:
+        AWS_REGION: us-east-2
+
+      env:
+        ECR_REPOSITORY: data-pipes-logs
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG
