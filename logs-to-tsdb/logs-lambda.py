@@ -2,29 +2,33 @@ import gzip
 import json
 import os
 import re
-import psycopg2
+import psycopg2.extras
 from base64 import b64decode
+from datetime import datetime, timezone
+
 
 # Database connection parameters
-#DB_HOST = os.environ['DB_HOST']
-#DB_PORT = os.environ['DB_PORT']
-#DB_USER = os.environ['DB_USER']
-#DB_PASSWORD = os.environ['DB_PASSWORD']
-#DB_NAME = os.environ['DB_NAME']
+DB_HOST = os.environ['DB_HOST']
+DB_PORT = '5432' 
+DB_USER = 'tsuser'
+DB_PASSWORD = os.environ['DB_PASSWORD']
+DB_NAME = 'tsdb' 
 
 log_pattern = re.compile(r'received: (.*})')
 
+def unix_to_datetime(unix_timestamp):
+    return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
+
 def handler(event, context):
     # Connect to the TimescaleDB
-#    conn = psycopg2.connect(
-#        host=DB_HOST,
-#        port=DB_PORT,
-#        user=DB_USER,
-#        password=DB_PASSWORD,
-#        dbname=DB_NAME
-#    )
-#    cursor = conn.cursor()
-
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        dbname=DB_NAME
+    )
+    cursor = conn.cursor()
 
     # Decompress and decode the log data
     compressed_payload = b64decode(event['awslogs']['data'])
@@ -37,20 +41,25 @@ def handler(event, context):
     for ev in payload['logEvents']:
         # Transform log_event as required and add to batched_logs
 
-        import sys; sys.stdin = open('/dev/tty')
-        import pdb; pdb.set_trace()
+        ts = unix_to_datetime(ev['timestamp']/1000)
+    
         match = log_pattern.search(ev.get('message',''))
-        if match:
-            data = json.loads(match.group(1))
- 
-        # Example: batched_logs.append((log_event['id'], log_event['message']))
-        pass
+        if not match:
+            continue
+
+        data = json.loads(match.group(1))
+
+        # TODO figure out why the logs all have schema = {}
+        model = json.dumps(data.get('schema'))
+        batched.append((ts, data['cid'], data['did'], model, data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao')))
     
     # Insert logs into TimescaleDB
-    insert_query = "INSERT INTO your_table_name (column1, column2) VALUES %s"
-    psycopg2.extras.execute_values(cursor, insert_query, batched_logs)
+    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao) VALUES %s"
+
+    psycopg2.extras.execute_values(cursor, insert_query, batched)
 
     conn.commit()
     cursor.close()
     conn.close()
 
+    print("Done, check the db")
