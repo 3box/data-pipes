@@ -29,3 +29,7 @@ jobs:
       run: |
         docker build -t 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG logs-to-tsdb/
         docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG
+
+        # Tag and push as "latest"
+        docker tag 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:latest
+        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:latest
