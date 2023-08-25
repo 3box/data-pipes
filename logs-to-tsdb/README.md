@@ -38,3 +38,5 @@ python-lambda-local -f handler logs-lambda.py sample_test.json -t 600
 ```
 
 New images are [published here](https://us-east-2.console.aws.amazon.com/ecr/repositories/private/967314784947/data-pipes-logs?region=us-east-2)
+
+
