@@ -27,5 +27,5 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
         AWS_REGION: us-east-2
       run: |
-        docker build -t public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG logs-to-tsdb/
-        docker push public.ecr.aws/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG logs-to-tsdb/
+        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG
