@@ -5,9 +5,7 @@ Lambda function for pulling CAS Cloudwatch logs into TimescaleDB
 Designed for running automatically, but may be tested locally
 as follows.
 
-Prereq - install this globally
-
-`pip3 install python-lambda-local`
+## Prerequisites for Local Development
 
 First, retrieve some data
 
@@ -23,13 +21,19 @@ base64 sample.json.gz > sample_base64.txt
 ```
 Then insert that text into the provided file `sample_test.json`
 
-Finally, run locally and pipe the test data to the docker image
+We also need to set up the local environment
 
 ```
 virtualenv venv
 . venv/bin/activate
 pip3 install -r requirements.txt
+pip3 install python-lambda-local
+```
 
+## Running locally
+
+```
+. venv/bin/activate
 python-lambda-local -f handler logs-lambda.py sample_test.json -t 600
 ```
 
