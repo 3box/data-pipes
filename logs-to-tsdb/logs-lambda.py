@@ -22,7 +22,7 @@ def unix_to_datetime(unix_timestamp):
 def handler(event, context):
     # Connect to the TimescaleDB
 
-    print("Connecting to db host" + DB_HOST + " for environment " + ENV)
+    print("Connecting to db host" + DB_HOST)
     conn = psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
