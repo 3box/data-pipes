@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 
 
 # Database connection parameters
+ENV = os.environ['env']
 DB_HOST = os.environ['DB_HOST']
 DB_PORT = '5432' 
 DB_USER = 'tsuser'
@@ -21,6 +22,8 @@ def unix_to_datetime(unix_timestamp):
 
 def handler(event, context):
     # Connect to the TimescaleDB
+
+    print("Connecting to db host" + DB_HOST + " for environment " + ENV)
     conn = psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
