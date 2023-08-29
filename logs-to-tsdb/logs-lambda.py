@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 
 
 # Database connection parameters
-ENV = os.environ['env']
 DB_HOST = os.environ['DB_HOST']
 DB_PORT = '5432' 
 DB_USER = 'tsuser'
