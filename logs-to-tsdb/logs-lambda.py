@@ -37,7 +37,6 @@ def handler(event, context):
     uncompressed_payload = gzip.decompress(compressed_payload)
     payload = json.loads(uncompressed_payload)
 
-
     batched = []
 
     for ev in payload['logEvents']:
