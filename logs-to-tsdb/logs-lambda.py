@@ -52,10 +52,10 @@ def handler(event, context):
 
         # TODO figure out why the logs all have schema = {}
         model = json.dumps(data.get('schema'))
-        batched.append((ts, data['cid'], data['did'], model, data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao')))
+        batched.append((ts, data['cid'], data['did'], model, data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao'), data.get('cap_cid')))
     
     # Insert logs into TimescaleDB
-    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao) VALUES %s"
+    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"
 
     psycopg2.extras.execute_values(cursor, insert_query, batched)
 

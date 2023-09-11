@@ -8,7 +8,7 @@ retrieves all the filtered log data in 30 min intervals to avoid hitting 1000 li
 
 ## format and process
 
-`do-all.sh`
+`zsh do-all.sh`
 
 runs the munge2.py on all the txt files to preprocess and then runs the lambda pipeline
 
