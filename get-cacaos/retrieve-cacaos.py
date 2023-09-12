@@ -39,7 +39,7 @@ def get_cacao_from_ipfs(cid, cap_cid=None):
             data = dag_get(cid)
             psig = data["signatures"][0]["protected"]
             psig_data = decode_protected_sig(psig)            
-            cap_cid = re.sub('ipfs://', '', psigdata.get('cap'))
+            cap_cid = re.sub('ipfs://', '', psig_data.get('cap'))
          
         except Exception as e:
             print("Error: " + str(e))
@@ -87,14 +87,14 @@ def get_rows_with_null_cacao():
 
     # Get rows we need to process
     if latest_last_updated:
-        cur.execute("""
+        upq = """
 SELECT cas_log_data.cid, cas_log_data.cap_cid
 FROM cas_log_data
 LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
 WHERE cid_cacao.cid IS NULL AND cas_log_data.timestamp_column_name > %s;
         """, (latest_last_updated,))
     else:
-        cur.execute("""
+        upq = """
 SELECT cas_log_data.cid, cas_log_data.cap_cid
 FROM cas_log_data
 LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
@@ -102,6 +102,8 @@ WHERE cid_cacao.cid IS NULL
 LIMIT 10;
      """)
 
+    import pdb; pdb.set_trace()
+    cur.execute(upq)
     rows = cur.fetchall()
 
     cur.close()
