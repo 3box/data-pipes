@@ -1,10 +1,18 @@
 import psycopg2
-import ipfshttpclient
 import os
 import subprocess
+import requests
 
 DATABASE_URL = os.environ.get('TS_DATABASE_URL')
 
+def dag_get(cid):
+    url = f'http://localhost:5001/api/v0/dag/get?arg={cid}'
+    response = requests.post(url)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
 
 def decode_protected_sig(sig_value):
     cmd = ['node', 'cmd-decode-sig.mjs']
@@ -21,11 +29,9 @@ def decode_protected_sig(sig_value):
 
 def get_cacao_from_ipfs(cid, cap_cid=None):
     # Create an IPFS client connection
-    client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-    import pdb; pdb.set_trace()
     if not cap_cid:
         try:
-            data = client.dag.get(cid)
+            data = dag_get(cid)
             psig = data["signatures"][0]["protected"]
             psig_data = decode_protected_sig(psig)            
             cap_cid = re.sub('ipfs://', '', psigdata.get('cap'))
@@ -36,7 +42,7 @@ def get_cacao_from_ipfs(cid, cap_cid=None):
 
 
     try:
-        cap_data = client.dag.get(cap_cid)
+        cap_data = dag_get(cap_cid)
     except Exception as e:
         print("Error: " + str(e))
         return (cap_cid, None)
