@@ -87,14 +87,14 @@ def get_rows_with_null_cacao():
 
     # Get rows we need to process
     if latest_last_updated:
-        upq = """
+        cur.execute("""
 SELECT cas_log_data.cid, cas_log_data.cap_cid
 FROM cas_log_data
 LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
 WHERE cid_cacao.cid IS NULL AND cas_log_data.timestamp_column_name > %s;
         """, (latest_last_updated,))
     else:
-        upq = """
+        cur.execute("""
 SELECT cas_log_data.cid, cas_log_data.cap_cid
 FROM cas_log_data
 LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
@@ -102,8 +102,6 @@ WHERE cid_cacao.cid IS NULL
 LIMIT 10;
      """)
 
-    import pdb; pdb.set_trace()
-    cur.execute(upq)
     rows = cur.fetchall()
 
     cur.close()
@@ -154,6 +152,7 @@ def execute_batch_updates(cur, successful_updates, failed_updates):
         cacao = EXCLUDED.cacao,
         last_updated = now();
     """
+    import pdb; pdb.set_trace()
     psycopg2.extras.execute_values(cur, upsert_query, successful_updates)
 
     # Batch increment failures
