@@ -1,9 +1,14 @@
 import psycopg2
+import re
 import os
 import subprocess
 import requests
 
 DATABASE_URL = os.environ.get('TS_DATABASE_URL')
+
+conn = psycopg2.connect(DATABASE_URL)
+cur = conn.cursor()
+
 
 def dag_get(cid):
     url = f'http://localhost:5001/api/v0/dag/get?arg={cid}'
@@ -62,7 +67,7 @@ def get_cacao_from_ipfs(cid, cap_cid=None):
 ################################################################################################
 # Update the failure count in the database
 #
-def handle_failure(cid, cur):
+def handle_failure(cid):
     """
     Handles failures for a specific CID. If the CID doesn't have an entry in the failure table,
     it's added. Otherwise, the count is incremented.
@@ -75,8 +80,6 @@ def handle_failure(cid, cur):
 #  Get the rows from the main database that we haven't got cacaos for yet
 #
 def get_rows_with_null_cacao():
-    conn = psycopg2.connect(DATABASE_URL)
-    cur = conn.cursor()
 
     # Get the latest last_updated timestamp from cid_cacao table
     cur.execute("SELECT MAX(last_updated) FROM cid_cacao;")
