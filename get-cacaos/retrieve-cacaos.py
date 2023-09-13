@@ -3,6 +3,7 @@ import re
 import os
 import subprocess
 import requests
+import json
 
 DATABASE_URL = os.environ.get('TS_DATABASE_URL')
 
@@ -38,7 +39,7 @@ def get_cacao_from_ipfs(cid, cap_cid=None):
         try:
             data = dag_get(cid)
             psig = data["signatures"][0]["protected"]
-            psig_data = decode_protected_sig(psig)            
+            psig_data = json.loads(decode_protected_sig(psig))
             cap_cid = re.sub('ipfs://', '', psig_data.get('cap'))
          
         except Exception as e:
