@@ -11,6 +11,7 @@ IPFS_PRIVATE_URL = os.environ.get('IPFS_PRIVATE_URL')
 conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
 
+handled_cids = []
 
 def dag_get(cid):
     url = f'http://localhost:5001/api/v0/dag/get?arg={cid}'
@@ -123,7 +124,12 @@ def process_rows(rows, batch_size=100):
 
     for row in rows:
         cid, cap_cid = row
+        if cid in handled_cids:
+            continue
+
         (cap, cacao) = get_cacao_from_ipfs(cid, cap_cid) 
+        handled_cids.append(cid)
+
         if cacao:
             successful_updates.append((cid, cap, cacao))
         else:
