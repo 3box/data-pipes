@@ -6,6 +6,7 @@ import requests
 import json
 
 DATABASE_URL = os.environ.get('TS_DATABASE_URL')
+IPFS_PRIVATE_URL = os.environ.get('IPFS_PRIVATE_URL')
 
 conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
@@ -13,7 +14,13 @@ cur = conn.cursor()
 
 def dag_get(cid):
     url = f'http://localhost:5001/api/v0/dag/get?arg={cid}'
-    response = requests.post(url)
+
+    try:
+        response = requests.post(url, timeout=5)
+    except requests.exceptions.Timeout:
+        print("have to use CAS")
+        alternative_url = f'{IPFS_PRIVATE_URL}/api/v0/dag/get?arg={cid}'
+        response = requests.post(alternative_url, timeout=5)
     
     if response.status_code == 200:
         return response.json()
