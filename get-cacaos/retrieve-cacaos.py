@@ -172,6 +172,8 @@ def execute_batch_updates(cur, successful_updates, failed_updates):
             last_updated = now();
         """, (cid,))
 
+    conn.commit()
+
 
 def run_batch():
     rows = get_rows_with_null_cacao()
