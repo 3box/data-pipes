@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2.extras
 import re
 import os
 import subprocess
