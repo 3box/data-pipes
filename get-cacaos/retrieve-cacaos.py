@@ -7,6 +7,8 @@ import json
 
 DATABASE_URL = os.environ.get('TS_DATABASE_URL')
 IPFS_PRIVATE_URL = os.environ.get('IPFS_PRIVATE_URL')
+IPFS_FIRST_TIMEOUT = 2
+IPFS_TIMEOUT = 1
 
 conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
@@ -17,11 +19,11 @@ def dag_get(cid):
     url = f'http://localhost:5001/api/v0/dag/get?arg={cid}'
 
     try:
-        response = requests.post(url, timeout=5)
+        response = requests.post(url, timeout=IPFS_FIRST_TIMEOUT)
     except requests.exceptions.Timeout:
         print("have to use CAS")
         alternative_url = f'{IPFS_PRIVATE_URL}/api/v0/dag/get?arg={cid}'
-        response = requests.post(alternative_url, timeout=5)
+        response = requests.post(alternative_url, timeout=IPFS_TIMEOUT)
     
     if response.status_code == 200:
         return response.json()
@@ -89,25 +91,24 @@ def handle_failure(cid):
 #
 def get_rows_with_null_cacao():
 
-    # Get the latest last_updated timestamp from cid_cacao table
-    cur.execute("SELECT MAX(last_updated) FROM cid_cacao;")
-    latest_last_updated = cur.fetchone()[0]
-
-    # Get rows we need to process
-    if latest_last_updated:
-        cur.execute("""
+#    # Get the latest last_updated timestamp from cid_cacao table
+#    cur.execute("SELECT MAX(last_updated) FROM cid_cacao;")
+#    latest_last_updated = cur.fetchone()[0]
+#
+#    # Get rows we need to process
+#    if latest_last_updated:
+#        cur.execute("""
+#SELECT cas_log_data.cid, cas_log_data.cap_cid
+#FROM cas_log_data
+#LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
+#WHERE cid_cacao.cid IS NULL AND cas_log_data.timestamp_column_name > %s;
+#        """, (latest_last_updated,))
+#    else:
+    cur.execute("""
 SELECT cas_log_data.cid, cas_log_data.cap_cid
 FROM cas_log_data
 LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
-WHERE cid_cacao.cid IS NULL AND cas_log_data.timestamp_column_name > %s;
-        """, (latest_last_updated,))
-    else:
-        cur.execute("""
-SELECT cas_log_data.cid, cas_log_data.cap_cid
-FROM cas_log_data
-LEFT JOIN cid_cacao ON cas_log_data.cid = cid_cacao.cid
-WHERE cid_cacao.cid IS NULL
-LIMIT 10;
+WHERE cid_cacao.cid IS NULL;
      """)
 
     rows = cur.fetchall()
@@ -118,7 +119,7 @@ LIMIT 10;
 ################################################################################################
 # Main loop - process all the rows, in batches, to retrieve and record the cacaos and cap cids
 #
-def process_rows(rows, batch_size=100):
+def process_rows(rows, batch_size=30):
     successful_updates = []
     failed_updates = []
 
