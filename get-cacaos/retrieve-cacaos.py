@@ -69,7 +69,6 @@ def get_cacao_from_ipfs(cid, cap_cid=None):
         print("Error: " + str(e))
         return (cap_cid, None) 
 
-    client.close()
 
 
 ################################################################################################
@@ -112,9 +111,6 @@ LIMIT 10;
 
     rows = cur.fetchall()
 
-    cur.close()
-    conn.close()
-
     return rows
 
 
@@ -144,8 +140,6 @@ def process_rows(rows, batch_size=100):
         execute_batch_updates(cur, successful_updates, failed_updates)
 
     conn.commit()
-    cur.close()
-    conn.close()
 
 
 ################################################################################################
@@ -160,7 +154,6 @@ def execute_batch_updates(cur, successful_updates, failed_updates):
         cacao = EXCLUDED.cacao,
         last_updated = now();
     """
-    import pdb; pdb.set_trace()
     psycopg2.extras.execute_values(cur, upsert_query, successful_updates)
 
     # Batch increment failures
@@ -177,6 +170,8 @@ def run_batch():
     rows = get_rows_with_null_cacao()
     process_rows(rows)
 
+    cur.close()
+    conn.close()
 
 if __name__ == "__main__":
     run_batch()
