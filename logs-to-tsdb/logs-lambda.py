@@ -50,9 +50,7 @@ def handler(event, context):
 
         data = json.loads(match.group(1))
 
-        # TODO figure out why the logs all have schema = {}
-        model = json.dumps(data.get('schema'))
-        batched.append((ts, data['cid'], data['did'], model, data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao'), data.get('cap_cid')))
+        batched.append((ts, data['cid'], data['did'], data.get('model'), data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao'), data.get('cap_cid')))
     
     # Insert logs into TimescaleDB
     insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"

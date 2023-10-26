@@ -1,5 +1,5 @@
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 
 def start_query_for_period(log_group, start_date, end_date):
@@ -14,9 +14,15 @@ def start_query_for_period(log_group, start_date, end_date):
         "--query", "queryId", 
         "--output", "text"
     ]
-
-    query_id = subprocess.check_output(cmd).decode().strip()
-    return query_id
+    try:
+      query_id = subprocess.check_output(cmd).decode().strip()
+      return query_id
+    except Exception as e:
+      print("Error starting query: " + str(e))
+      print("Command was:")
+      print(" ".join(cmd))
+      print("----------------")
+      return 
 
 def get_query_results(query_id, filename):
     cmd = [
@@ -30,10 +36,10 @@ def get_query_results(query_id, filename):
 def main():
     log_group = "/ecs/ceramic-prod-cas"
     
-    start_date_str = "2023-08-01"
-    end_date_str = "2023-08-29"
-    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+    start_date_str = "2023-09-12 13:16:40"
+    end_date_str = "2023-09-20 14:17:36"
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     
     query_ids = []
 
@@ -41,7 +47,10 @@ def main():
     while start_date < end_date:
         next_date = start_date + timedelta(minutes=30)
         query_id = start_query_for_period(log_group, start_date, next_date)
-        query_ids.append((query_id, start_date.strftime('%Y-%m-%d-%H-%M')))  # Storing the date for filename
+        if query_id:
+            query_ids.append((query_id, start_date.strftime('%Y-%m-%d-%H-%M')))  # Storing the date for filename
+        else:
+            print("SKIPPING {} to {}".format(start_date.strftime('%Y-%m-%d-%H-%M'), end_date.strftime('%Y-%m-%d-%H-%M')))
         
         start_date = next_date
 
