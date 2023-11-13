@@ -36,8 +36,8 @@ def get_query_results(query_id, filename):
 def main():
     log_group = "/ecs/ceramic-prod-cas"
     
-    start_date_str = "2023-09-12 13:16:40"
-    end_date_str = "2023-09-20 14:17:36"
+    start_date_str = "2023-10-20 12:00:00"
+    end_date_str = "2023-11-08 13:00:00"
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     
