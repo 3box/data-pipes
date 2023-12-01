@@ -40,7 +40,7 @@ def handler():
     )
     cursor = conn.cursor()
 
-    repos = ['ComposeDbExampleApp','lit-composedb','ceramic-eas','ceramic-ai','verifiable-credentials']
+    repos = ['ComposeDbExampleApp','lit-composedb','ceramic-eas','ceramic-ai','verifiable-credentials', 'create-ceramic-app']
     for repo in repos:
 
         response = requests.get(
