@@ -6,7 +6,6 @@ import psycopg2.extras
 from base64 import b64decode
 from datetime import datetime, timezone
 
-
 # Database connection parameters
 DB_HOST = os.environ['DB_HOST']
 DB_PORT = '5432' 
