@@ -54,6 +54,8 @@ def handler(event, context):
     # Insert logs into TimescaleDB
     insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"
 
+    print("Inserting {} rows including {}".format(len(batched), batched[0]))
+
     psycopg2.extras.execute_values(cursor, insert_query, batched)
 
     conn.commit()
