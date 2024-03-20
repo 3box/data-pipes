@@ -46,7 +46,7 @@ def handler():
         response = requests.get(
     'https://api.github.com/repos/ceramicstudio/{}/traffic/clones'.format(repo),
     headers=headers
-        )       
+        )
         data = response.json()
         for clone_data in data.get('clones', {}):
            day_str = datetime.strptime(clone_data['timestamp'], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
