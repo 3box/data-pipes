@@ -61,5 +61,4 @@ def handler(event, context):
     conn.commit()
     cursor.close()
     conn.close()
-
     print("Done, check the db")
