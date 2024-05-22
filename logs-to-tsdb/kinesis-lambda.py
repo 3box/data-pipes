@@ -5,6 +5,7 @@ import re
 import psycopg2.extras
 from base64 import b64decode
 from datetime import datetime, timezone
+from pprint import pprint
 
 # Database connection parameters
 DB_HOST = os.environ['DB_HOST']
@@ -33,6 +34,7 @@ def handler(event, context):
     batched = []
 
     for record in event['Records']:
+        pprint(record)
         # Decode the Kinesis data
         payload = b64decode(record['kinesis']['data']).decode('utf-8')
         data = json.loads(payload)
