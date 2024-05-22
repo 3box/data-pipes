@@ -21,8 +21,6 @@ def unix_to_datetime(unix_timestamp):
     return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
 
 def handler(event, context):
-    pprint(event)
-    warn(pformat(event))
     # Connect to the TimescaleDB
     if DB_HOST:
       # normally we should connect, in tests we do not 
