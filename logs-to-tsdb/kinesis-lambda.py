@@ -21,6 +21,8 @@ def unix_to_datetime(unix_timestamp):
     return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
 
 def handler(event, context):
+    pprint(event)
+    warn(pformat(event))
     # Connect to the TimescaleDB
     print("Connecting to db host " + DB_HOST)
     conn = psycopg2.connect(
