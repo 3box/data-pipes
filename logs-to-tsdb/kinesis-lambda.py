@@ -61,4 +61,4 @@ def handler(event, context):
     cursor.close()
     conn.close()
 
-    print("Done, check the db")
+    print("Kinesis pipe done, check the db")
