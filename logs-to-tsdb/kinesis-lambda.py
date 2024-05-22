@@ -34,7 +34,9 @@ def handler(event, context):
 
     batched = []
 
+    print("NOT decoding data")
     for record in event['Records']:
+
         payload = record['kinesis']['data']
         # it doesn't appear to be encoded
         #  payload = b64decode(record['kinesis']['data']).decode('utf-8')
