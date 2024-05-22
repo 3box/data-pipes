@@ -5,7 +5,8 @@ import re
 import psycopg2.extras
 from base64 import b64decode, b64encode
 from datetime import datetime, timezone
-from pprint import pprint
+from pprint import pprint, pformat
+from warnings import warn
 
 # Database connection parameters
 DB_HOST = os.environ['DB_HOST']
@@ -35,7 +36,12 @@ def handler(event, context):
 
     for record in event['Records']:
         # Decode the Kinesis data
-        payload = b64decode(record['kinesis']['data']).decode('utf-8')
+        try:
+          payload = b64decode(record['kinesis']['data']).decode('utf-8')
+        except Exception as e:
+          warn("Exception: " + str(e))
+          warn("The data was: " + pformat(record))
+          raise e
         data = json.loads(payload)
 
         for ev in data['logEvents']:
