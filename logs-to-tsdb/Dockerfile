@@ -6,8 +6,9 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 
-COPY logs-lambda.py ${LAMBDA_TASK_ROOT}
+COPY kinesis-lambda.py ${LAMBDA_TASK_ROOT}
 
 RUN pip install -r requirements.txt
 
-CMD [ "logs-lambda.handler" ]
+CMD [ "kinesis-lambda.handler" ]
+
