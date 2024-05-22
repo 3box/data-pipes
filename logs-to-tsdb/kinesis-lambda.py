@@ -35,13 +35,9 @@ def handler(event, context):
     batched = []
 
     for record in event['Records']:
-        # Decode the Kinesis data
-        try:
-          payload = b64decode(record['kinesis']['data']).decode('utf-8')
-        except Exception as e:
-          warn("Exception: " + str(e))
-          warn("The data was: " + pformat(record))
-          raise e
+        payload = record['kinesis']['data']
+        # it doesn't appear to be encoded
+        #  payload = b64decode(record['kinesis']['data']).decode('utf-8')
         data = json.loads(payload)
 
         for ev in data['logEvents']:
@@ -74,7 +70,7 @@ def handler(event, context):
 if __name__ == "__main__":
 
     # Mock event and context for testing locally
-    event = {
+    encoded_event = {
         "Records": [
             {
                 "kinesis": {
@@ -90,6 +86,23 @@ if __name__ == "__main__":
             }
         ]
     }
+
+    event = {
+        "Records": [
+            {
+                "kinesis": {
+                    "data": json.dumps({
+                        "logEvents": [
+                            {
+                                "timestamp": 1625239073000,
+                                "message": "your log message"
+                            }
+                        ]
+                    })
+                }
+            }
+        ]
+    } 
     pprint(event)
     context = {}
 
