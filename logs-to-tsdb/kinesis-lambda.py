@@ -3,7 +3,7 @@ import json
 import os
 import re
 import psycopg2.extras
-from base64 import b64decode
+from base64 import b64decode, b64encode
 from datetime import datetime, timezone
 from pprint import pprint
 
@@ -34,7 +34,6 @@ def handler(event, context):
     batched = []
 
     for record in event['Records']:
-        pprint(record)
         # Decode the Kinesis data
         payload = b64decode(record['kinesis']['data']).decode('utf-8')
         data = json.loads(payload)
@@ -64,3 +63,28 @@ def handler(event, context):
     conn.close()
 
     print("Kinesis pipe done, check the db")
+
+# For testing locally
+if __name__ == "__main__":
+
+    # Mock event and context for testing locally
+    event = {
+        "Records": [
+            {
+                "kinesis": {
+                    "data": b64encode(json.dumps({
+                        "logEvents": [
+                            {
+                                "timestamp": 1625239073000,
+                                "message": "your log message"
+                            }
+                        ]
+                    }).encode('utf-8')).decode('utf-8')
+                }
+            }
+        ]
+    }
+    pprint(event)
+    context = {}
+
+    handler(event, context)
