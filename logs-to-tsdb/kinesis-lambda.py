@@ -24,7 +24,7 @@ def handler(event, context):
     # Connect to the TimescaleDB
     if DB_HOST:
       # normally we should connect, in tests we do not 
-      print("Connecting to db host " + DB_HOST)
+      # print("Connecting to db host " + DB_HOST + " database " + DB_NAME)
       conn = psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -56,7 +56,8 @@ def handler(event, context):
     insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"
 
     if batched:
-        print("Inserting {} rows including {}".format(len(batched), batched[0]))
+        print("Inserting {} rows".format(len(batched)))
+#        print("Inserting {} rows including {}".format(len(batched), batched[0]))
         psycopg2.extras.execute_values(cursor, insert_query, batched)
         conn.commit()
     else:
@@ -65,7 +66,7 @@ def handler(event, context):
     cursor.close()
     conn.close()
 
-    print("Kinesis pipe done, check the db")
+#    print("Kinesis pipe done, check the db")
 
 # For testing locally
 if __name__ == "__main__":
