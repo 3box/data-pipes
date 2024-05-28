@@ -53,7 +53,7 @@ def handler(event, context):
             batched.append((ts, log_data['cid'], log_data['did'], log_data.get('model'), log_data.get('family'), log_data.get('stream'), log_data.get('origin'), log_data.get('cacao'), log_data.get('cap_cid')))
 
     # Insert logs into TimescaleDB
-    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"
+    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s on CONFLICT DO NOTHING"
 
     if batched:
         print("Inserting {} rows".format(len(batched)))
