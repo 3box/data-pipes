@@ -50,7 +50,11 @@ def handler(event, context):
                 continue
 
             log_data = json.loads(match.group(1))
-            batched.append((ts, log_data['cid'], log_data['did'], log_data.get('model'), log_data.get('family'), log_data.get('stream'), log_data.get('origin'), log_data.get('cacao'), log_data.get('cap_cid')))
+            cid = log_data.get('cid')
+            if not cid:
+                print("NO CID in data! {}".format(log_data))
+                continue
+            batched.append((ts, cid, log_data.get('did'), log_data.get('model'), log_data.get('family'), log_data.get('stream'), log_data.get('origin'), log_data.get('cacao'), log_data.get('cap_cid')))
 
     # Insert logs into TimescaleDB
     insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s on CONFLICT DO NOTHING"
