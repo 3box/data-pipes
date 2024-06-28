@@ -79,5 +79,10 @@ for logs in ls:
     newl['awslogs']['data'] = subprocess.run(['base64', '{}.gz'.format(fname)], capture_output=True, text=True).stdout.strip()
 
     with open('ready_{}.json'.format(logid), 'w') as f:
-       json.dump(newl, f)
+        json.dump(newl, f)
+#    os.system('python-lambda-local -f handler ../logs-lambda.py ready_{}.json --environment DB_HOST={} DB_PASSWORD={} --timeout 20'.format(
+#       logid,
+#       os.environ['DB_HOST'],
+#       os.environ['DB_PASSWORD']
+#    ))
     os.system('python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(logid)) 
