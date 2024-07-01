@@ -1,4 +1,5 @@
 import gzip
+from pprint import pprint
 import json
 import os
 import re
@@ -48,11 +49,11 @@ def handler(event, context):
             continue
 
         data = json.loads(match.group(1))
-
-        batched.append((ts, data['cid'], data['did'], data.get('model'), data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao'), data.get('cap_cid')))
+        pprint(data)
+        batched.append((ts, data['cid'], data.get('did'), data.get('model'), data.get('family'), data.get('stream'), data.get('origin'), data.get('cacao'), data.get('cap_cid')))
     
     # Insert logs into TimescaleDB
-    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s"
+    insert_query = "INSERT INTO cas_log_data (timestamp, cid, did, model, family, stream, origin, cacao, cap_cid) VALUES %s ON CONFLICT DO NOTHING"
 
     print("Inserting {} rows including {}".format(len(batched), batched[0]))
 

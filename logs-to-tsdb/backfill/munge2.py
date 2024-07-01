@@ -80,4 +80,5 @@ for logs in ls:
 
     with open('ready_{}.json'.format(logid), 'w') as f:
        json.dump(newl, f)
+    cmd = 'python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(logid)
     os.system('python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(logid)) 
