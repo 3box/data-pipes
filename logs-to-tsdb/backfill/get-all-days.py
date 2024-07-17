@@ -36,8 +36,8 @@ def get_query_results(query_id, filename):
 def main():
     log_group = "/ecs/ceramic-prod-cas"
     
-    start_date_str = "2024-06-17 23:59:00"
-    end_date_str = "2024-06-26 00:00:00"
+    start_date_str = "2024-07-01 23:59:00"
+    end_date_str = "2024-07-15 20:00:00"
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     
@@ -45,7 +45,7 @@ def main():
 
     # Start all the queries
     while start_date < end_date:
-        next_date = start_date + timedelta(minutes=30)
+        next_date = start_date + timedelta(minutes=5)
         query_id = start_query_for_period(log_group, start_date, next_date)
         if query_id:
             query_ids.append((query_id, start_date.strftime('%Y-%m-%d-%H-%M')))  # Storing the date for filename

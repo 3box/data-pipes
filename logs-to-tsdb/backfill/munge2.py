@@ -70,15 +70,16 @@ with open(backfile, 'r') as f:
 LAM_TEMP = { "awslogs": { "data": "" }}
 
 for logs in ls:
+    print("Inserting data from logstream: " + logs)
     (grp,part,logid) = logs.split('/')
-    fname = 'logs_{}.json'.format(logid)
+    fname = '{}.json'.format(backfile)
     with open(fname, 'w') as f:
         json.dump(ls[logs], f)
     os.system('gzip {}'.format(fname))
     newl = LAM_TEMP.copy()
     newl['awslogs']['data'] = subprocess.run(['base64', '{}.gz'.format(fname)], capture_output=True, text=True).stdout.strip()
 
-    with open('ready_{}.json'.format(logid), 'w') as f:
+    with open('ready_{}.json'.format(backfile), 'w') as f:
        json.dump(newl, f)
-    cmd = 'python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(logid)
-    os.system('python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(logid)) 
+    cmd = 'python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(backfile)
+    os.system('python-lambda-local -f handler ../logs-lambda.py ready_{}.json --timeout 20'.format(backfile)) 

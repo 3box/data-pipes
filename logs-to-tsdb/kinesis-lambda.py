@@ -111,3 +111,4 @@ if __name__ == "__main__":
     context = {}
 
     handler(event, context)
+    print("Done")
