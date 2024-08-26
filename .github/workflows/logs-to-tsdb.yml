@@ -17,7 +17,7 @@ jobs:
     - name: Login to Public ECR
       uses: docker/login-action@v1
       with:
-        registry: 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs
+        registry: 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -27,10 +27,10 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
         AWS_REGION: us-east-2
       run: |
-        docker build -t 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG logs-to-tsdb/
-        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG
+        docker build -t 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs:$IMAGE_TAG logs-to-tsdb/
+        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs:$IMAGE_TAG
 
         # Tag and push as "kinesis" for now
-        docker tag 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:$IMAGE_TAG 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:kinesis
-        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/data-pipes-logs:kinesis
+        docker tag 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs:$IMAGE_TAG 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs:kinesis
+        docker push 967314784947.dkr.ecr.us-east-2.amazonaws.com/ceramic-prod-grafana-data-pipes-logs:kinesis
 
